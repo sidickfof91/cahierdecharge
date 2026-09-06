@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cahier des charges — Entretien client</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2430;
+    --blueprint:#3D5A80;
+    --paper:#F7F5EF;
+    --paper-line:#DCD6C7;
+    --graphite:#2B2B2B;
+    --amber:#C87F31;
+    --line:#C9D6E3;
+    --card:#FFFFFF;
+    --ok:#3F7A5C;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--paper-line) 1px, transparent 1px);
+    background-size: 100% 32px;
+    color:var(--graphite);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:56px 24px 120px;
+  }
+
+  header.doc-head{
+    border-bottom:2px solid var(--ink);
+    padding-bottom:28px;
+    margin-bottom:40px;
+  }
+  .doc-head .kicker{
+    font-size:13px;
+    color:var(--blueprint);
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+  .doc-head h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:clamp(32px, 5vw, 44px);
+    margin:6px 0 12px;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  .doc-head p{
+    max-width:56ch;
+    color:#555;
+    font-size:15.5px;
+    margin:0;
+  }
+  .doc-meta{
+    display:flex;
+    gap:28px;
+    margin-top:22px;
+    flex-wrap:wrap;
+  }
+  .doc-meta label{
+    display:block;
+    font-size:12px;
+    color:var(--blueprint);
+    margin-bottom:4px;
+  }
+  .doc-meta input{
+    border:none;
+    border-bottom:1px solid var(--ink);
+    background:transparent;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:2px 0;
+    width:190px;
+    color:var(--ink);
+  }
+  .doc-meta input:focus{outline:none; border-bottom:2px solid var(--blueprint);}
+
+  /* progress rail */
+  .progress-rail{
+    position:sticky;
+    top:0;
+    background:var(--paper);
+    z-index:5;
+    padding:14px 0 10px;
+    margin-bottom:8px;
+    border-bottom:1px solid var(--paper-line);
+  }
+  .progress-track{
+    height:3px;
+    background:#E4DFD1;
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--blueprint);
+    transition:width .3s ease;
+  }
+  .progress-label{
+    font-size:12px;
+    color:#7a7a7a;
+    margin-top:6px;
+    display:flex;
+    justify-content:space-between;
+  }
+
+  section.block{
+    background:var(--card);
+    border:1px solid var(--paper-line);
+    border-radius:2px;
+    padding:30px 32px 34px;
+    margin-bottom:22px;
+    position:relative;
+  }
+  section.block::before{
+    content:attr(data-num);
+    position:absolute;
+    top:-14px;
+    left:28px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Fraunces', serif;
+    font-size:13px;
+    padding:3px 10px;
+    border-radius:1px;
+  }
+  section.block h2{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:22px;
+    color:var(--ink);
+    margin:6px 0 4px;
+  }
+  section.block .sub{
+    color:#7a7a7a;
+    font-size:14px;
+    margin-bottom:22px;
+  }
+
+  .field{margin-bottom:20px;}
+  .field:last-child{margin-bottom:0;}
+  .field label.q{
+    display:block;
+    font-size:15px;
+    color:var(--ink);
+    margin-bottom:8px;
+    font-weight:500;
+  }
+  .field .hint{
+    display:block;
+    font-size:12.5px;
+    color:#8a8a8a;
+    margin-top:-4px;
+    margin-bottom:8px;
+  }
+  input[type=text], input[type=email], input[type=tel], input[type=date], textarea{
+    width:100%;
+    border:1px solid var(--line);
+    background:#FCFBF8;
+    border-radius:3px;
+    padding:10px 12px;
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    color:var(--graphite);
+  }
+  textarea{resize:vertical; min-height:70px;}
+  input:focus, textarea:focus{
+    outline:none;
+    border-color:var(--blueprint);
+    box-shadow:0 0 0 3px rgba(61,90,128,0.12);
+  }
+
+  .choice-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .choice{
+    position:relative;
+  }
+  .choice input{position:absolute; opacity:0; width:0; height:0;}
+  .choice span{
+    display:inline-block;
+    padding:8px 14px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    font-size:13.5px;
+    color:var(--ink);
+    cursor:pointer;
+    background:#fff;
+    transition:background .15s, border-color .15s;
+  }
+  .choice input:checked + span{
+    background:var(--blueprint);
+    border-color:var(--blueprint);
+    color:#fff;
+  }
+  .choice input:focus-visible + span{
+    box-shadow:0 0 0 3px rgba(61,90,128,0.25);
+  }
+
+  .radio-row{display:flex; gap:18px; flex-wrap:wrap;}
+  .radio-row label{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:14px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .radio-row input{accent-color:var(--blueprint);}
+
+  .foot-actions{
+    display:flex;
+    gap:12px;
+    margin-top:36px;
+    flex-wrap:wrap;
+  }
+  button{
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    padding:13px 22px;
+    border-radius:3px;
+    border:1px solid var(--ink);
+    cursor:pointer;
+    background:var(--ink);
+    color:var(--paper);
+  }
+  button.secondary{
+    background:transparent;
+    color:var(--ink);
+  }
+  button:hover{opacity:0.88;}
+
+  #summary-wrap{display:none; margin-top:30px;}
+  #summary-wrap.show{display:block;}
+  #summary-box{
+    background:var(--ink);
+    color:#EAE6DA;
+    border-radius:3px;
+    padding:26px 28px;
+    font-family:'Inter',monospace;
+    font-size:13px;
+    white-space:pre-wrap;
+    line-height:1.65;
+    max-height:480px;
+    overflow-y:auto;
+  }
+  #summary-box strong{color:var(--amber);}
+  .copy-msg{
+    font-size:13px;
+    color:var(--ok);
+    margin-top:8px;
+    height:16px;
+  }
+
+  @media print{
+    body{background:#fff;}
+    .progress-rail, .foot-actions{display:none !important;}
+    section.block{border:1px solid #ccc; break-inside:avoid;}
+    #summary-wrap{display:block !important; margin-top:20px;}
+  }
+
+  @media (max-width:600px){
+    section.block{padding:26px 20px 28px;}
+    .doc-meta{gap:18px;}
+    .doc-meta input{width:140px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc-head">
+    <div class="kicker">Entretien de cadrage</div>
+    <h1>Cahier des charges — site web</h1>
+    <p>À remplir avec la cliente pour cerner ses besoins avant le devis et le développement. Toutes les réponses peuvent être modifiées plus tard dans le projet.</p>
+    <div class="doc-meta">
+      <div>
+        <label>Nom de la cliente / entreprise</label>
+        <input type="text" id="meta-client" placeholder="ex. Boulangerie Zaynab">
+      </div>
+      <div>
+        <label>Date de l'entretien</label>
+        <input type="date" id="meta-date">
+      </div>
+      <div>
+        <label>Réalisé par</label>
+        <input type="text" id="meta-author" placeholder="Sidick">
+      </div>
+    </div>
+  </header>
+
+  <div class="progress-rail">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-label"><span id="progress-text">0 % des champs remplis</span><span>8 sections</span></div>
+  </div>
+
+  <form id="cdc-form">
+
+    <section class="block" data-num="1">
+      <h2>L'entreprise et son activité</h2>
+      <div class="sub">Pour comprendre qui parle à travers ce site.</div>
+
+      <div class="field">
+        <label class="q">Que fait l'entreprise, en quelques phrases ?</label>
+        <textarea name="activite" placeholder="Secteur, produits ou services, ce qui la distingue..."></textarea>
+      </div>
+      <div class="field">
+        <label class="q">Depuis combien de temps existe-t-elle ?</label>
+        <input type="text" name="anciennete" placeholder="ex. lancée en 2021, ou tout juste démarrée">
+      </div>
+      <div class="field">
+        <label class="q">A-t-elle déjà un site web actuellement ?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="site_existant" value="oui"> Oui</label>
+          <label><input type="radio" name="site_existant" value="non"> Non</label>
+        </div>
+        <span class="hint">Si oui, demander l'adresse et ce qu'elle aime / n'aime pas dessus.</span>
+        <input type="text" name="site_existant_url" placeholder="URL du site actuel (si applicable)" style="margin-top:8px;">
+      </div>
+    </section>
+
+    <section class="block" data-num="2">
+      <h2>Objectif du site</h2>
+      <div class="sub">Le site doit servir un but précis, pas juste "exister".</div>
+
+      <div class="field">
+        <label class="q">Quel type de site cherche-t-elle ?</label>
+        <div class="choice-grid">
+          <label class="choice"><input type="checkbox" name="type_site" value="Vitrine"><span>Site vitrine</span></label>
+          <label class="choice"><input type="checkbox" name="type_site" value="E-commerce"><span>Boutique en ligne</span></label>
+          <label class="choice"><input type="checkbox" name="type_site" value="Blog"><span>Blog / contenu</span></label>
+          <label class="choice"><input type="checkbox" name="type_site" value="Réservation"><span>Prise de rendez-vous</span></label>
+          <label class="choice"><input type="checkbox" name="type_site" value="Portfolio"><span>Portfolio</span></label>
+          <label class="choice"><input type="checkbox" name="type_site" value="Application"><span>Application web</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="q">Quelle est l'action la plus importante qu'un visiteur doit faire sur le site ?</label>
+        <span class="hint">Appeler, acheter, remplir un formulaire, réserver, lire un article...</span>
+        <textarea name="objectif_principal"></textarea>
+      </div>
+      <div class="field">
+        <label class="q">Comment saura-t-elle que le site fonctionne bien, six mois après le lancement ?</label>
+        <textarea name="succes" placeholder="ex. plus d'appels, plus de ventes en ligne, plus de visibilité locale..."></textarea>
+      </div>
+    </section>
+
+    <section class="block" data-num="3">
+      <h2>Public cible</h2>
+      <div class="sub">À qui le site doit-il parler en priorité ?</div>
+
+      <div class="field">
+        <label class="q">Qui sont les visiteurs types (âge, situation, besoins) ?</label>
+        <textarea name="cible" placeholder="ex. parents de jeunes enfants dans la région de Gatineau"></textarea>
+      </div>
+      <div class="field">
+        <label class="q">D'où viendront-ils principalement ?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="provenance" value="Local"> Clientèle locale</label>
+          <label><input type="radio" name="provenance" value="National"> À l'échelle du pays</label>
+          <label><input type="radio" name="provenance" value="International"> International</label>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" data-num="4">
+      <h2>Contenu et fonctionnalités</h2>
+      <div class="sub">Ce que le site doit contenir concrètement.</div>
+
+      <div class="field">
+        <label class="q">Quelles pages sont nécessaires ?</label>
+        <div class="choice-grid">
+          <label class="choice"><input type="checkbox" name="pages" value="Accueil"><span>Accueil</span></label>
+          <label class="choice"><input type="checkbox" name="pages" value="À propos"><span>À propos</span></label>
+          <label class="choice"><input type="checkbox" name="pages" value="Services/Produits"><span>Services / Produits</span></label>
+          <label class="choice"><input type="checkbox" name="pages" value="Galerie"><span>Galerie photo</span></label>
+          <label class="choice"><input type="checkbox" name="pages" value="Blog"><span>Blog</span></label>
+          <label class="choice"><input type="checkbox" name="pages" value="Contact"><span>Contact</span></label>
+          <label class="choice"><input type="checkbox" name="pages" value="FAQ"><span>FAQ</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="q">Quelles fonctionnalités particulières sont attendues ?</label>
+        <div class="choice-grid">
+          <label class="choice"><input type="checkbox" name="fonctions" value="Formulaire de contact"><span>Formulaire de contact</span></label>
+          <label class="choice"><input type="checkbox" name="fonctions" value="Panier / paiement en ligne"><span>Paiement en ligne</span></label>
+          <label class="choice"><input type="checkbox" name="fonctions" value="Prise de rendez-vous"><span>Prise de rendez-vous</span></label>
+          <label class="choice"><input type="checkbox" name="fonctions" value="Multilingue"><span>Site multilingue</span></label>
+          <label class="choice"><input type="checkbox" name="fonctions" value="Newsletter"><span>Inscription infolettre</span></label>
+          <label class="choice"><input type="checkbox" name="fonctions" value="Espace membre"><span>Espace membre / connexion</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="q">Qui fournira les textes, photos et vidéos ?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="contenu_source" value="Cliente"> La cliente les a déjà</label>
+          <label><input type="radio" name="contenu_source" value="À produire"> À produire ensemble</label>
+          <label><input type="radio" name="contenu_source" value="Prestataire"> À la charge du prestataire</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="q">Le site devra-t-il être mis à jour souvent après le lancement (elle-même) ?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="autonomie" value="Oui, souvent"> Oui, régulièrement</label>
+          <label><input type="radio" name="autonomie" value="Rarement"> Rarement</label>
+          <label><input type="radio" name="autonomie" value="Jamais"> Jamais, je m'en occupe</label>
+        </div>
+        <span class="hint">Détermine si un back-office / CMS est nécessaire.</span>
+      </div>
+    </section>
+
+    <section class="block" data-num="5">
+      <h2>Design et identité visuelle</h2>
+      <div class="sub">L'apparence et l'ambiance recherchées.</div>
+
+      <div class="field">
+        <label class="q">A-t-elle déjà un logo ou une charte graphique (couleurs, polices) ?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="charte" value="Oui, complète"> Oui, complète</label>
+          <label><input type="radio" name="charte" value="Partielle"> Juste un logo</label>
+          <label><input type="radio" name="charte" value="Rien"> Rien à fournir</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="q">Quels 2-3 sites (dans son domaine ou non) lui plaisent visuellement ? Pourquoi ?</label>
+        <textarea name="references_visuelles"></textarea>
+      </div>
+      <div class="field">
+        <label class="q">En trois mots, quelle ambiance le site doit-il dégager ?</label>
+        <span class="hint">ex. chaleureux, professionnel, minimaliste, festif, rassurant...</span>
+        <input type="text" name="ambiance">
+      </div>
+    </section>
+
+    <section class="block" data-num="6">
+      <h2>Aspects techniques</h2>
+      <div class="sub">Les éléments qui influencent l'architecture du site.</div>
+
+      <div class="field">
+        <label class="q">Possède-t-elle déjà un nom de domaine et un hébergement ?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="domaine" value="Oui les deux"> Oui, les deux</label>
+          <label><input type="radio" name="domaine" value="Nom seulement"> Juste le nom de domaine</label>
+          <label><input type="radio" name="domaine" value="Rien"> Rien, à faire</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="q">Le site doit-il s'intégrer à d'autres outils déjà utilisés ?</label>
+        <span class="hint">ex. logiciel de comptabilité, réseaux sociaux, Google Maps, système de caisse...</span>
+        <textarea name="integrations"></textarea>
+      </div>
+      <div class="field">
+        <label class="q">Contraintes particulières à connaître ?</label>
+        <span class="hint">Accessibilité, bilinguisme obligatoire, hébergement au Canada, etc.</span>
+        <textarea name="contraintes"></textarea>
+      </div>
+    </section>
+
+    <section class="block" data-num="7">
+      <h2>Budget et délais</h2>
+      <div class="sub">Pour cadrer une proposition réaliste.</div>
+
+      <div class="field">
+        <label class="q">Quelle enveloppe budgétaire envisage-t-elle pour ce projet ?</label>
+        <input type="text" name="budget" placeholder="ex. entre 1500 $ et 3000 $, ou à discuter">
+      </div>
+      <div class="field">
+        <label class="q">Y a-t-il une date de lancement souhaitée ou imposée ?</label>
+        <span class="hint">ex. ouverture de commerce, événement, saison...</span>
+        <input type="text" name="delai">
+      </div>
+      <div class="field">
+        <label class="q">Souhaite-t-elle un contrat de maintenance après la mise en ligne ?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="maintenance" value="Oui"> Oui</label>
+          <label><input type="radio" name="maintenance" value="À voir"> À voir plus tard</label>
+          <label><input type="radio" name="maintenance" value="Non"> Non</label>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" data-num="8">
+      <h2>Contact et suivi</h2>
+      <div class="sub">Pour la suite des échanges.</div>
+
+      <div class="field">
+        <label class="q">Nom du contact principal</label>
+        <input type="text" name="contact_nom">
+      </div>
+      <div class="field">
+        <label class="q">Courriel</label>
+        <input type="email" name="contact_courriel">
+      </div>
+      <div class="field">
+        <label class="q">Téléphone</label>
+        <input type="tel" name="contact_tel">
+      </div>
+      <div class="field">
+        <label class="q">Comment préfère-t-elle valider les étapes du projet ?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="validation" value="Courriel"> Courriel</label>
+          <label><input type="radio" name="validation" value="Appel"> Appel</label>
+          <label><input type="radio" name="validation" value="Rencontre"> Rencontre en personne</label>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot-actions">
+      <button type="button" id="btn-generate">Générer le résumé</button>
+      <button type="button" id="btn-print" class="secondary">Imprimer / PDF</button>
+      <button type="reset" class="secondary">Réinitialiser</button>
+    </div>
+  </form>
+
+  <div id="summary-wrap">
+    <div id="summary-box"></div>
+    <div class="foot-actions">
+      <button type="button" id="btn-copy" class="secondary">Copier le résumé</button>
+    </div>
+    <div class="copy-msg" id="copy-msg"></div>
+  </div>
+
+</div>
+
+<script>
+const form = document.getElementById('cdc-form');
+const allInputs = () => Array.from(form.querySelectorAll('input, textarea'));
+
+function updateProgress(){
+  const inputs = allInputs();
+  const groups = {};
+  inputs.forEach(el=>{
+    if(el.type==='checkbox'){
+      groups[el.name] = groups[el.name] || false;
+      if(el.checked) groups[el.name] = true;
+    } else if(el.type==='radio'){
+      groups[el.name] = groups[el.name] || false;
+      if(el.checked) groups[el.name] = true;
+    } else {
+      groups[el.name+Math.random()] = el.value.trim().length>0;
+    }
+  });
+  const vals = Object.values(groups);
+  const filled = vals.filter(Boolean).length;
+  const pct = vals.length ? Math.round((filled/vals.length)*100) : 0;
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-text').textContent = pct+' % des champs remplis';
+}
+form.addEventListener('input', updateProgress);
+form.addEventListener('change', updateProgress);
+updateProgress();
+
+function labelize(name){
+  const map = {
+    activite:"Activité de l'entreprise", anciennete:"Ancienneté",
+    site_existant:"Site existant", site_existant_url:"URL du site actuel",
+    type_site:"Type de site souhaité", objectif_principal:"Action prioritaire du visiteur",
+    succes:"Définition du succès", cible:"Public cible", provenance:"Provenance des visiteurs",
+    pages:"Pages nécessaires", fonctions:"Fonctionnalités attendues", contenu_source:"Source du contenu",
+    autonomie:"Mises à jour futures par la cliente", charte:"Charte graphique existante",
+    references_visuelles:"Sites de référence", ambiance:"Ambiance recherchée",
+    domaine:"Nom de domaine / hébergement", integrations:"Intégrations nécessaires",
+    contraintes:"Contraintes particulières", budget:"Budget envisagé", delai:"Délai souhaité",
+    maintenance:"Contrat de maintenance", contact_nom:"Contact", contact_courriel:"Courriel",
+    contact_tel:"Téléphone", validation:"Mode de validation des étapes"
+  };
+  return map[name] || name;
+}
+
+document.getElementById('btn-generate').addEventListener('click', ()=>{
+  const data = new FormData(form);
+  const seen = {};
+  for (const [key, val] of data.entries()){
+    if(!val) continue;
+    if(!seen[key]) seen[key] = [];
+    seen[key].push(val);
+  }
+  const client = document.getElementById('meta-client').value || '(nom non renseigné)';
+  const date = document.getElementById('meta-date').value || '(date non renseignée)';
+  const author = document.getElementById('meta-author').value || '(auteur non renseigné)';
+
+  let out = `CAHIER DES CHARGES — SITE WEB\n`;
+  out += `Cliente : ${client}\n`;
+  out += `Date : ${date}    Réalisé par : ${author}\n`;
+  out += `${'-'.repeat(50)}\n\n`;
+
+  const order = ['activite','anciennete','site_existant','site_existant_url','type_site','objectif_principal','succes',
+    'cible','provenance','pages','fonctions','contenu_source','autonomie','charte','references_visuelles','ambiance',
+    'domaine','integrations','contraintes','budget','delai','maintenance','contact_nom','contact_courriel','contact_tel','validation'];
+
+  order.forEach(key=>{
+    if(seen[key]){
+      out += `${labelize(key)} :\n  ${seen[key].join(', ')}\n\n`;
+    }
+  });
+
+  document.getElementById('summary-box').textContent = out;
+  document.getElementById('summary-wrap').classList.add('show');
+  document.getElementById('summary-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+document.getElementById('btn-print').addEventListener('click', ()=>{
+  document.getElementById('btn-generate').click();
+  setTimeout(()=>window.print(), 200);
+});
+
+document.getElementById('btn-copy').addEventListener('click', ()=>{
+  const text = document.getElementById('summary-box').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const msg = document.getElementById('copy-msg');
+    msg.textContent = 'Copié dans le presse-papiers ✓';
+    setTimeout(()=>msg.textContent='', 2500);
+  });
+});
+</script>
+
+</body>
+</html>
